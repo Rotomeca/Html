@@ -4,7 +4,6 @@ class RotomecaHtml {
         this.attribs = attribs;
         this.childs = [];
         this.parent = parent;
-        this.link = null;
     }
 
     _update_class() {
@@ -50,47 +49,33 @@ class RotomecaHtml {
     }
 
     _create(balise, parent, attribs, isend) {
-        this.childs.push(new RotomecaHtml(balise, parent, attribs));
+        this.childs.push(new this.constructor(balise, parent, attribs));
          
         return isend ? parent : this.childs[this.childs.length - 1];
     }
 
     generate() {
-        return this._generate({mode:1});
-    }
-
-    generate_html() {
         return this._generate({});
     }
 
 
-
     _generate({
-        i = -1,
-        mode = 0
+        i = -1
     }) {
         let html = [];
         
         if ('start' !== this.balise) html.push(`${this._create_blanks(i)}${this._get_balise()}`);
 
         for (const iterator of this.childs) {
-            html.push(iterator._generate({i:i + 1, mode}));
+            html.push(iterator._generate({i:i + 1}));
         }
 
         html = html.join('\r\n');
 
-        switch (mode) {
-            case 0:
-                break;
-            case 1:
-                html = $(html);
-                break ;
-            default:
-                throw new Error('mode not exist');
-        }
-
         return html;
     }
+
+
 
     _get_balise(){
         let balise;
@@ -198,3 +183,71 @@ class RotomecaHtml {
     }
 }
 
+class RotomecaHtmlJquery extends RotomecaHtml {
+    constructor(balise, parent, attribs = {}) {
+        super(balise, parent, attribs);
+        this.$jlink = null;
+    }
+
+    generate() {
+        return this._generate({});
+    }
+
+
+    end(debug = null) {
+        return this.parent;
+    }
+
+    _generate({
+        i = -1
+    }) {
+        let $html = $();
+        
+        if ('start' !== this.balise) {
+            const balise = this._get_balise();
+            if (balise.includes('<')) {
+                $html.push($(this._get_balise()));
+                $html = $html[0];
+            }
+            else return balise;
+        }
+
+        for (const iterator of this.childs) {
+            var generated = iterator._generate({i:i + 1});
+            console.log($html, generated);
+            if('start' === this.balise) $html.push(generated) 
+            else  $html.append(generated);
+        }
+
+        if ('start' === this.balise) {
+            if (0 === $html.length) throw new Error('no html'); 
+            else if (1 === $html.length) $html = $html[0];
+            else {
+                let $div = $('div');
+                for (const iterator of $html) {
+                    $div.append(iterator);
+                }
+
+                $html = $div;
+            }
+        }
+
+        this.$jlink = $html;
+
+        return i === -1 ? this : this.$jlink;
+    }
+
+    _get_balise(){
+        let balise = super._get_balise();
+
+        if (!!this.attribs?.['raw-content']) {
+            balise += `</${this.balise}>`;
+        }
+
+        return balise;
+    }
+
+    static start() {
+        return new RotomecaHtmlJquery('start', null);
+    }
+}
