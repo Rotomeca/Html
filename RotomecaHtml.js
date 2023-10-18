@@ -1,3 +1,5 @@
+//export {JsHtml}
+
 class RotomecaHtml {
     constructor(balise, parent, attribs = {}) {
         this.balise = balise;
@@ -92,12 +94,21 @@ class RotomecaHtml {
         return this.tag_one_line('img', attribs);
     }
 
+    _try_add_label(attribs = {}) {
+        let html_input = this;
+        if (!!attribs?.id && attribs?.label) {
+            html_input = html_input.label({for:attribs.id}).text(attribs.label).end();
+        }
+
+        return html_input;
+    }
+
     input(attribs = {}) {
-        return this.tag_one_line('input', attribs);
+        return this._try_add_label(attribs).tag_one_line('input', attribs);
     }
 
     select(attribs = {}) {
-        return this.tag('select', attribs);
+        return this._try_add_label(attribs).tag('select', attribs);
     }
 
     option(attribs = {}){
@@ -110,7 +121,43 @@ class RotomecaHtml {
     }
 
     textarea(attribs = {}) {
-        return this.tag('textarea', attribs);
+        return this._try_add_label(attribs).tag('textarea', attribs);
+    }
+
+    form(attribs = {}) {
+        return this.tag('form', attribs);
+    }
+
+    button(attribs = {}) {
+        return this.tag('button', attribs);
+    }
+
+    fieldset(attribs = {}) {
+        return this.tag('fieldset', attribs);
+    }
+
+    label(attribs = {}){
+        return this.tag('label', attribs);
+    }
+
+    legend(attribs = {}){
+        return this.tag('legend', attribs);
+    }
+
+    meter(attribs = {}){
+        return this.tag('meter', attribs);
+    }
+
+    optgroup(attribs = {}){
+        return this.tag('optgroup', attribs);
+    }
+
+    output(attribs = {}){
+        return this.tag('output', attribs);
+    }
+
+    progress(attribs = {}){
+        return this.tag('progress', attribs);
     }
 
     br(){
@@ -277,8 +324,6 @@ class RotomecaHtml {
         return end;
     }
 
-
-
     generate() {
         return this._generate({mode:1});
     }
@@ -441,7 +486,8 @@ class RotomecaHtml {
     static create_alias(alias, {
         online = false,
         before_callback = null,
-        callback = null,
+        generate_callback = null,
+        after_callback = null,
         tag = 'div'
     }) {
         RotomecaHtml.prototype[alias] = function (attribs = {}, ...args) {
@@ -453,10 +499,10 @@ class RotomecaHtml {
 
             if (online && typeof attribs === 'object') attribs.one_line = true;
 
-            let html = this._create(tag, this, typeof attribs === 'object' ? attribs : null, online);
+            let html = !!generate_callback ? generate_callback(this, attribs, ...args) : this._create(tag, this, typeof attribs === 'object' ? attribs : null, online);
 
-            if (!!callback) {
-                const call = callback(html, attribs, ...args);
+            if (!!after_callback) {
+                const call = after_callback(html, attribs, ...args);
 
                 if (!!call && call instanceof RotomecaHtml) html = call;
             }
@@ -489,3 +535,30 @@ RotomecaHtml.remove_id = function (id) {
 RotomecaHtml.add_action = function(id, action, callback) {
     RotomecaHtml.actions[id] = {action, callback};
 }
+
+// /**
+//  * Fonctions utiles pour écrire du html en javascript.
+//  * @type {{start:RotomecaHtml, create_alias:function, extend:function}} 
+//  */
+// const JsHtml = {};
+// Object.defineProperties(JsHtml, {
+//     start: {
+//         get() {
+//             return RotomecaHtml.start;
+//         },
+//         configurable: false,
+//         enumerable: false,
+//     },
+//     create_alias: {
+//         get() {
+//             return RotomecaHtml.create_alias;
+//         },
+//         configurable: false,
+//         enumerable: false,
+//     },
+//     extend:{
+//         value: function (name, callback) {
+//             RotomecaHtml.prototype[name] = callback;
+//         }
+//     }
+// });
