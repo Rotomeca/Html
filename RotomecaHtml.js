@@ -47,12 +47,44 @@ class RotomecaHtml {
         return this.tag('a', attribs);
     }
 
+    dd(attribs = {}){
+        return this.tag('dd', attribs);
+    }
+
+    dt(attribs = {}){
+        return this.tag('dt', attribs);
+    }
+
+    dl(attribs = {}){
+        return this.tag('dl', attribs);
+    }
+
     div(attribs = {}) {
         return this.tag('div', attribs);
     }
 
+    blockquote(attribs = {}) {
+        return this.tag('blockquote', attribs);
+    }
+
+    ul(attribs = {}) {
+        return this.tag('ul', attribs);
+    }
+
+    ol(attribs = {}) {
+        return this.tag('ol', attribs);
+    }
+
+    li(attribs = {}) {
+        return this.tag('ul', attribs);
+    }
+
     span(attribs = {}){
         return this.tag('span', attribs);
+    }
+
+    p(attribs = {}){
+        return this.tag('p', attribs);
     }
 
     img(src, attribs = {}){
@@ -83,6 +115,10 @@ class RotomecaHtml {
 
     br(){
         return this.tag_one_line('br');
+    }
+
+    hr(){
+        return this.tag_one_line('hr');
     }
 
     address(attribs = {}) {
@@ -147,6 +183,78 @@ class RotomecaHtml {
 
     section(attribs = {}) {
         return this.tag('section', attribs);
+    }
+
+    menu(attribs = {}) {
+        return this.tag('menu', attribs);
+    }
+
+    iframe(attribs = {}) {
+        return this.tag('iframe', attribs).end();
+    }
+
+    canvas(attribs = {}) {
+        return this.tag('canvas', attribs);
+    }
+
+    script(attribs = {}) {
+        return this.tag('script', attribs);
+    }
+
+    table(attribs = {}) {
+        return this.tag('table', attribs);
+    }
+
+    caption(attribs = {}) {
+        return this.tag('caption', attribs);
+    }
+
+    caption(attribs = {}) {
+        return this.tag('caption', attribs);
+    }
+
+    col(){
+        return this.tag_one_line('col');
+    }
+
+    colgroup(attribs = {}) {
+        return this.tag('colgroup', attribs);
+    }
+
+    tbody(attribs = {}) {
+        return this.tag('tbody', attribs);
+    }
+
+    td(attribs = {}) {
+        return this.tag('td', attribs);
+    }
+
+    th(attribs = {}) {
+        return this.tag('th', attribs);
+    }
+
+    tr(attribs = {}) {
+        return this.tag('th', attribs);
+    }
+
+    tfoot(attribs = {}) {
+        return this.tag('tfoot', attribs);
+    }
+
+    tbody(attribs = {}) {
+        return this.tag('tbody', attribs);
+    }
+
+    details(attribs = {}) {
+        return this.tag('details', attribs);
+    }
+
+    summary(attribs = {}) {
+        return this.tag('summary', attribs);
+    }
+
+    dialog(attribs = {}) {
+        return this.tag('dialog', attribs);
     }
 
     comment(text) {
