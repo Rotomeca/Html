@@ -536,29 +536,29 @@ RotomecaHtml.add_action = function(id, action, callback) {
     RotomecaHtml.actions[id] = {action, callback};
 }
 
-// /**
-//  * Fonctions utiles pour écrire du html en javascript.
-//  * @type {{start:RotomecaHtml, create_alias:function, extend:function}} 
-//  */
-// const JsHtml = {};
-// Object.defineProperties(JsHtml, {
-//     start: {
-//         get() {
-//             return RotomecaHtml.start;
-//         },
-//         configurable: false,
-//         enumerable: false,
-//     },
-//     create_alias: {
-//         get() {
-//             return RotomecaHtml.create_alias;
-//         },
-//         configurable: false,
-//         enumerable: false,
-//     },
-//     extend:{
-//         value: function (name, callback) {
-//             RotomecaHtml.prototype[name] = callback;
-//         }
-//     }
-// });
+/**
+ * Fonctions utiles pour écrire du html en javascript.
+ * @type {{start:RotomecaHtml, create_alias:function, extend:function}} 
+ */
+const JsHtml = {};
+Object.defineProperties(JsHtml, {
+    start: {
+        get() {
+            return RotomecaHtml.start;
+        },
+        configurable: false,
+        enumerable: false,
+    },
+    create_alias: {
+        get() {
+            return RotomecaHtml.create_alias;
+        },
+        configurable: false,
+        enumerable: false,
+    },
+    extend:{
+        value: function (name, callback) {
+            RotomecaHtml.prototype[name] = callback;
+        }
+    }
+});
