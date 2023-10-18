@@ -43,6 +43,10 @@ class RotomecaHtml {
         return this._create_oneline(balise, this, attribs);
     }
 
+    a(attribs = {}){
+        return this.tag('a', attribs);
+    }
+
     div(attribs = {}) {
         return this.tag('div', attribs);
     }
@@ -70,7 +74,7 @@ class RotomecaHtml {
 
     option_one_line(value, text, attribs = {}){
         attribs.value = value;
-        return this.option().text(text).end();
+        return this.option(attribs).text(text).end();
     }
 
     textarea(attribs = {}) {
@@ -79,6 +83,70 @@ class RotomecaHtml {
 
     br(){
         return this.tag_one_line('br');
+    }
+
+    address(attribs = {}) {
+        return this.tag('address', attribs);
+    }
+
+    article(attribs = {}) {
+        return this.tag('article', attribs);
+    }
+
+    aside(attribs = {}) {
+        return this.tag('aside', attribs);
+    }
+
+    footer(attribs = {}) {
+        return this.tag('footer', attribs);
+    }
+
+    header(attribs = {}) {
+        return this.tag('header', attribs);
+    }
+
+    h(num, attribs = {}) {
+        return this.tag(`h${num}`, attribs);
+    }
+
+    h1(attribs = {}) {
+        return this.h(1, attribs);
+    }
+
+    h2(attribs = {}) {
+        return this.h(2, attribs);
+    }
+
+    h3(attribs = {}) {
+        return this.h(3, attribs);
+    }
+
+    h4(attribs = {}) {
+        return this.h(4, attribs);
+    }
+
+    h5(attribs = {}) {
+        return this.h(5, attribs);
+    }
+
+    h6(attribs = {}) {
+        return this.h(6, attribs);
+    }
+
+    hgroup(attribs = {}) {
+        return this.tag('hgroup', attribs);
+    }
+
+    main(attribs = {}) {
+        return this.tag('main', attribs);
+    }
+
+    nav(attribs = {}) {
+        return this.tag('nav', attribs);
+    }
+
+    section(attribs = {}) {
+        return this.tag('section', attribs);
     }
 
     comment(text) {
@@ -101,6 +169,8 @@ class RotomecaHtml {
         return end;
     }
 
+
+
     generate() {
         return this._generate({mode:1});
     }
@@ -110,7 +180,7 @@ class RotomecaHtml {
     }
 
     _create(balise, parent, attribs, isend) {
-        this.childs.push(new RotomecaHtml(balise, parent, attribs));
+        this.childs.push(new this.constructor(balise, parent, attribs));
          
         return isend ? parent : this.childs[this.childs.length - 1];
     }
@@ -138,7 +208,7 @@ class RotomecaHtml {
     _generate({
         i = -1,
         mode = 0,
-        joli_html = false
+        joli_html = false,
     }) {
         let html = [];
         
@@ -156,15 +226,17 @@ class RotomecaHtml {
             case 1:
                 html = $(html);
 
-                for (const key in this.attribs) {
-                    if (Object.hasOwnProperty.call(this.attribs, key)) {
-                        if (key.includes('on'))
-                        {
-                            const element = this.attribs[key];
+                let id;
+                let $item;
+                for (const iterator of html.find("[data-on-id!=''][data-on-id]")) {
+                    $item = $(iterator);
+                    id = $item.attr('data-on-id');
 
-                            if (typeof element === 'function') html.on(key.replace('on', ''), element);
-                        }
-                    }
+                    $item.on(RotomecaHtml.actions[id].action.replace('on', ''), RotomecaHtml.actions[id].callback);
+
+                    RotomecaHtml.remove_id(id);
+                    id = null;
+                    $item = null;
                 }
 
                 break ;
@@ -216,6 +288,12 @@ class RotomecaHtml {
                                     balise.push(`${key}="${(typeof element === 'function' ? element(this) : element)}"`);
                                     break;
                             }
+                        }
+                        else if (key.includes('on')) {
+                            var id = RotomecaHtml.generate_ids();
+                            balise.push(`data-on-id="${id}"`);
+                            RotomecaHtml.add_action(id, key, element);
+                            id = null;
                         }
                     }
                 }
@@ -282,7 +360,7 @@ class RotomecaHtml {
     }
 }
 
-RotomecaHtml.ids = [];
+RotomecaHtml.actions = {};
 RotomecaHtml.generate_ids = function makeid(length = 5) {
     let result = '';
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -293,10 +371,13 @@ RotomecaHtml.generate_ids = function makeid(length = 5) {
       counter += 1;
     }
 
-    if (this.ids.includes(result)) result = RotomecaHtml.generate_ids(~~(Math.random()*100));
+    if (Object.keys(this.actions).includes(result)) result = RotomecaHtml.generate_ids(~~(Math.random()*100));
 
     return result;
 }
 RotomecaHtml.remove_id = function (id) {
-    RotomecaHtml.ids = RotomecaHtml.ids.filter(x => x !== id);
+    RotomecaHtml.actions[id] = null;
+}
+RotomecaHtml.add_action = function(id, action, callback) {
+    RotomecaHtml.actions[id] = {action, callback};
 }
