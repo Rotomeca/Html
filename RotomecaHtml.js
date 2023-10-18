@@ -1,4 +1,4 @@
-//export {JsHtml}
+export {JsHtml}
 
 class RotomecaHtml {
     constructor(balise, parent, attribs = {}) {

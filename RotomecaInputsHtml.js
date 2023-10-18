@@ -1,4 +1,4 @@
-//import { JsHtml } from "./RotomecaHtml";
+import { JsHtml } from "./RotomecaHtml";
 
 JsHtml.extend('_ext_input_tag', function (name, attribs = {}) {
     attribs.type = name;
