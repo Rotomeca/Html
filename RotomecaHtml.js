@@ -89,9 +89,16 @@ class RotomecaHtml {
         return this.tag('p', attribs);
     }
 
-    img(src, attribs = {}){
-        attribs.src = src; 
+    img(attribs = {}){
         return this.tag_one_line('img', attribs);
+    }
+
+    style() {
+        return this.tag('style');
+    }
+
+    style_css_prop(key, value){
+        return this.text(`${key}:${value};`);
     }
 
     _try_add_label(attribs = {}) {
@@ -431,7 +438,7 @@ class RotomecaHtml {
                                             else current_class.push(iterator);
                                         }
 
-                                        balise.push(`${key}="${current_class}"`);
+                                        balise.push(`${key}="${current_class.join(' ')}"`);
                                         current_class.length = 0;
                                         current_class = null;
                                         break;
@@ -538,13 +545,14 @@ RotomecaHtml.add_action = function(id, action, callback) {
 
 /**
  * Fonctions utiles pour écrire du html en javascript.
- * @type {{start:RotomecaHtml, create_alias:function, extend:function}} 
+ * @type {{start:RotomecaHtml, create_alias:function, extend:function, update:function}} 
+ * 
  */
 const JsHtml = {};
 Object.defineProperties(JsHtml, {
     start: {
         get() {
-            return RotomecaHtml.start;
+            return RotomecaHtml.start();
         },
         configurable: false,
         enumerable: false,
@@ -559,6 +567,14 @@ Object.defineProperties(JsHtml, {
     extend:{
         value: function (name, callback) {
             RotomecaHtml.prototype[name] = callback;
+        }
+    },
+    update:{
+        value: function (name, callback) {
+            const old = RotomecaHtml.prototype[name];
+            RotomecaHtml.prototype[name] = function (...args) {
+                return callback(this, old, ...args);
+            }
         }
     }
 });
