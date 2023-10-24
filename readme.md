@@ -1,0 +1,1 @@
+Require jquery for the `generate()` methode.
